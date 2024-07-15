@@ -13,8 +13,6 @@ defmodule ExAwsMskIamAuth do
                               SignedPayloadGenerator
                             )
 
-  @handshake_version 1
-
   def auth(
         _host,
         _sock,
@@ -52,13 +50,14 @@ defmodule ExAwsMskIamAuth do
   def auth(
         host,
         sock,
+        vsn,
         mod,
         client_id,
         timeout,
         _sasl_opts = {mechanism = :AWS_MSK_IAM, aws_secret_key_id, aws_secret_access_key}
       )
       when is_binary(aws_secret_key_id) and is_binary(aws_secret_access_key) do
-    with :ok <- handshake(sock, mod, timeout, client_id, mechanism, @handshake_version) do
+    with :ok <- handshake(sock, mod, timeout, client_id, mechanism, vsn) do
       client_final_msg =
         @signed_payload_generator.get_msk_signed_payload(
           host,
