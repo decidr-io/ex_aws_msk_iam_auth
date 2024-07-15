@@ -66,7 +66,7 @@ defmodule ExAwsMskIamAuth do
           aws_secret_access_key
         )
 
-      server_final_msg = send_recv(sock, mod, client_id, vsn, timeout, client_final_msg)
+      server_final_msg = send_recv(sock, mod, client_id, timeout, client_final_msg)
 
       case @kpro_lib.find(:error_code, server_final_msg) do
         :no_error -> :ok
@@ -83,8 +83,8 @@ defmodule ExAwsMskIamAuth do
     {:error, "Invalid SASL mechanism"}
   end
 
-  defp send_recv(sock, mod, client_id, vsn, timeout, payload) do
-    req = @kpro_lib.make(:sasl_authenticate, vsn, [{:auth_bytes, payload}])
+  defp send_recv(sock, mod, client_id, timeout, payload) do
+    req = @kpro_lib.make(:sasl_authenticate, _auth_req_vsn = 0, [{:auth_bytes, payload}])
     rsp = @kpro_lib.send_and_recv(req, sock, mod, client_id, timeout)
 
     Logger.debug("Final Auth Response from server - #{inspect(rsp)}")
