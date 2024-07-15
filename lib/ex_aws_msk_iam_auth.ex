@@ -48,6 +48,7 @@ defmodule ExAwsMskIamAuth do
         ) ::
           :ok | {:error, any()}
   def auth(
+        _module_name,
         host,
         sock,
         vsn,
