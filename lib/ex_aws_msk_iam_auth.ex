@@ -35,12 +35,16 @@ defmodule ExAwsMskIamAuth do
       when aws_secret_access_key == nil,
       do: {:error, "AWS Secret Access Key is empty"}
 
+  def auth(_host, _sock, _mod, _client_id, _timeout, _sasl_opts) do
+    {:error, "Invalid SASL mechanism"}
+
   # The following code is based on the implmentation of SASL handshake implementation from kafka_protocol Erlang library
   # Ref: https://github.com/kafka4beam/kafka_protocol/blob/master/src/kpro_sasl.erl
   @impl true
   @spec auth(
           any(),
           port(),
+          non_neg_integer(),
           :gen_tcp | :ssl,
           binary(),
           :infinity | non_neg_integer(),
@@ -77,10 +81,6 @@ defmodule ExAwsMskIamAuth do
         Logger.error("Handshake failed #{error}")
         {:error, error}
     end
-  end
-
-  def auth(_host, _sock, _mod, _client_id, _timeout, _sasl_opts) do
-    {:error, "Invalid SASL mechanism"}
   end
 
   defp send_recv(sock, mod, client_id, timeout, payload) do
