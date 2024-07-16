@@ -12,7 +12,6 @@ defmodule SignedPayloadGenerator do
   @service "kafka-cluster"
   @region Application.compile_env(:ex_aws_msk_iam_auth, :region, "us-east-2")
   @method "GET"
-  @version "2020_10_22"
   @user_agent "msk-elixir-client"
   # 15 minutes
   @ttl 900
@@ -23,10 +22,11 @@ defmodule SignedPayloadGenerator do
 
   Returns signed payload in bytes
   """
-  def get_msk_signed_payload(host, now, aws_secret_key_id, aws_secret_access_key)
+  def get_msk_signed_payload(_host, now, aws_secret_key_id, aws_secret_access_key)
       when is_binary(aws_secret_key_id) and
              is_binary(aws_secret_access_key) do
-    url = "kafka://" <> to_string(host) <> "?Action=kafka-cluster%3AConnect"
+    # url = "kafka://" <> to_string(host) <> ""
+    url = "kafka.#{@region}.amazonaws.com?Action=kafka-cluster%3AConnect"
 
     aws_v4_signed_query =
       :aws_signature.sign_v4_query_params(
@@ -51,7 +51,6 @@ defmodule SignedPayloadGenerator do
     # Building rest of the payload in the format from Java reference implementation
     signed_payload =
       signed_payload
-      |> Map.put("version", @version)
       |> Map.put("host", url_map[:host])
       |> Map.put("user-agent", @user_agent)
 

@@ -41,6 +41,7 @@ defmodule ExAwsMskIamAuth do
   @spec auth(
           any(),
           port(),
+          non_neg_integer(),
           :gen_tcp | :ssl,
           binary(),
           :infinity | non_neg_integer(),
@@ -66,7 +67,11 @@ defmodule ExAwsMskIamAuth do
           aws_secret_access_key
         )
 
+      Logger.debug("Client final message - #{inspect(client_final_msg)}")
+
       server_final_msg = send_recv(sock, mod, client_id, timeout, client_final_msg)
+
+      Logger.debug("Server final message - #{inspect(server_final_msg)}")
 
       case @kpro_lib.find(:error_code, server_final_msg) do
         :no_error -> :ok
