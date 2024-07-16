@@ -25,8 +25,8 @@ defmodule SignedPayloadGenerator do
   def get_msk_signed_payload(_host, now, aws_secret_key_id, aws_secret_access_key)
       when is_binary(aws_secret_key_id) and
              is_binary(aws_secret_access_key) do
-    # url = "kafka://" <> to_string(host) <> ""
-    url = "kafka.#{@region}.amazonaws.com?Action=kafka-cluster%3AConnect"
+    # url = "kafka://" <> to_string(host) <> "?Action=kafka-cluster%3AConnect"
+    url = "https://kafka.#{@region}.amazonaws.com?Action=kafka-cluster%3AConnect"
 
     aws_v4_signed_query =
       :aws_signature.sign_v4_query_params(
